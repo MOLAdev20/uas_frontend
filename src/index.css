@@ -5,3 +5,7 @@
 .form-control{
     @apply border w-full border-gray-300 p-2 outline-none focus:border-blue-500 focus:ring-blue-500 md:text-lg sm:text-sm
 }
+
+.merge-icon{
+    @apply flex items-center
+}

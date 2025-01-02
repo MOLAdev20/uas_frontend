@@ -78,6 +78,9 @@ const ShowStudent = () => {
                           <thead className="text-gray-700 uppercase bg-gray-50">
                               <tr>
                                   <th scope="col" className="px-6 py-3">
+                                      #
+                                  </th>
+                                  <th scope="col" className="px-6 py-3">
                                       NIS
                                   </th>
                                   <th scope="col" className="px-6 py-3">
@@ -97,6 +100,10 @@ const ShowStudent = () => {
                           <tbody>
                             {data.length > 0 ? data.map((m) => (
                               <tr key={m.id} className="bg-white border-b">
+                                <td className="px-6 py-4">
+                                  {m.avatar == "none" ? <img src={`${import.meta.env.VITE_API}/assets/defaultUser.jpg`} alt="avatar" className="rounded-full" width={"50px"}/> :
+                                  <img src={`${import.meta.env.VITE_API}/upload/${m.avatar}`} alt="avatar" className="rounded-full" width={"50px"}/>}
+                                </td>
                                 <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                                   {m.nisn}
                                 </th>

@@ -1,10 +1,11 @@
-import { ArrowLeftCircle, Pencil } from "react-bootstrap-icons";
+import { ArrowLeftCircle, Pencil, Upload } from "react-bootstrap-icons";
 import { Link } from "react-router-dom";
 import Navbar from "../../Components/Navbar";
 import changeFormatDate from "../../helper/DateFormat";
 import Loading from "../../Components/Loading";
 import { useParams } from "react-router-dom"
 import { useEffect, useState } from "react";
+import Swal from 'sweetalert2';
 
 const StudentDetail = () => {
     const {studentId} = useParams("studentId");
@@ -12,7 +13,7 @@ const StudentDetail = () => {
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(true)
 
-    useEffect(() => {
+    const fetchData = () => {
         fetch(`${import.meta.env.VITE_API}/student/detail/${studentId}`)
         .then(res => res.json())
         .then((resJSON) => {
@@ -22,7 +23,33 @@ const StudentDetail = () => {
             }
         })
         .finally(() => setLoading(false))
+    }
+
+    useEffect(() => {
+        fetchData()
     }, [])
+
+    const handleUpload = (e) => {
+        e.preventDefault()
+        setLoading(true)
+        const formData = new FormData();
+        formData.append('avatar', e.target.files[0]);
+        fetch(`${import.meta.env.VITE_API}/student/upload-avatar/${studentId}`, {
+            method: "POST",
+            body: formData,
+        })
+        .then(res => res.json())
+        .then(({status}) => {
+            if(status == "success"){
+                Swal.fire('Berhasil', "Foto berhasil diupload", 'success');
+            }
+
+            fetchData()
+        })
+        .finally(() => setLoading(false))
+    }
+
+    
 
     return (
         <>
@@ -52,10 +79,20 @@ const StudentDetail = () => {
                                     <Loading/>
                                 </div>
                             ) : data.length > 0 ? data.map((item, index) => (
-                                <div className="grid gap-4 grid-cols-12 mt-5">
-                                    <div className="md:col-span-4 col-span-12 p-2 border rounded">
-                                        <img src={"https://i.pinimg.com/736x/66/e6/be/66e6be9841f79359e714651708978023.jpg"} alt="avatar" />
+                                <div className="grid gap-4 grid-cols-12 mt-5" key={index}>
+                                    <div className="md:col-span-4 col-span-12 h-fit p-2 border rounded relative">
+                                        {item.avatar == "none" ? 
+                                            <img src={`${import.meta.env.VITE_API}/assets/defaultUser.jpg`} alt="avatar" />
+                                            :
+                                            <img src={`${import.meta.env.VITE_API}/upload/${item.avatar}`} alt="avatar" />
+                                        }
+                                        <button className="p-4 shadow active:bg-blue-700 rounded-full font-medium absolute bottom-5 left-10 right-10 flex items-center justify-center bg-blue-500 text-white" onClick={() => document.querySelector("#avatarUpload").click()}>
+                                            <Upload className="mr-2"/> Ganti Foto
+                                        </button>
                                     </div>
+                                    <form className="hidden">
+                                        <input type="file" id="avatarUpload" onChange={(e) => handleUpload(e)} />
+                                    </form>
                                     <div className="md:col-span-8 col-span-12">
                                         <div key={index} className="bg-white overflow-hidden shadow rounded-lg border">
                                             <div className="px-4 py-5 sm:px-6 flex items-center justify-between">
@@ -121,6 +158,22 @@ const StudentDetail = () => {
                                                         </dt>
                                                         <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                                                             {item.address}
+                                                        </dd>
+                                                    </div>
+                                                    <div className="py-3 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                                        <dt className="text-sm font-medium text-gray-500">
+                                                            Terdaftar Pada
+                                                        </dt>
+                                                        <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                                            {changeFormatDate(item.createdAt, "with-time")}
+                                                        </dd>
+                                                    </div>
+                                                    <div className="py-3 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                                        <dt className="text-sm font-medium text-gray-500">
+                                                            Diperbaharui Pada
+                                                        </dt>
+                                                        <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                                            {changeFormatDate(item.updatedAt, "with-time")}
                                                         </dd>
                                                     </div>
                                                 </dl>

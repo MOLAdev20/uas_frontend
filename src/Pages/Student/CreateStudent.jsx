@@ -1,8 +1,10 @@
 import { useState } from "react"
-import { ArrowLeftCircle, List } from "react-bootstrap-icons"
+import { ArrowLeftCircle} from "react-bootstrap-icons"
+import Navbar from "../../Components/Navbar"
 import "../../../src/mystyle.css"
 
 import Swal from 'sweetalert2'
+import { Link } from "react-router-dom"
 
 const CreateStudent = () => {
 
@@ -21,16 +23,31 @@ const CreateStudent = () => {
   }
 
   const handleClickButton = () => {
+    const requiredFields = ["nisn", "studentName", "gender", "religion", "birth_place", "birth_date", "address"];
+    
+    if (requiredFields.some(field => !form[field])) {
+      return Swal.fire('Data belum lengkap!', "Harap coba lagi", 'error');
+    }
+  
     fetch(`${import.meta.env.VITE_API}/student/insert`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(form)
-    }).then(res => res.json()).then(data => 
-      Swal.fire('Data berhasil disimpan', "", 'success')
-    ).catch(err => console.log(err))
-  }
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(form),
+    })
+      .then(res => res.json())
+      .then(({ status }) => {
+        const messages = {
+          "nisn-max-reached": ['NISN melebihi 10 digit!', "Data gagal disimpan. Harap coba lagi", 'error'],
+          "nisn-conflict": ['NISN sudah terdaftar!', "Data gagal disimpan. Harap coba lagi", 'error'],
+        };
+  
+        return Swal.fire(...(messages[status] || ['Data berhasil disimpan', "Anda bisa melihatnya di halaman Data Siswa", 'success']));
+      })
+      .catch(err => {
+        console.error(err);
+        Swal.fire('Data gagal disimpan', "Harap coba kembali", 'error');
+      });
+  };
 
   return (
     <>
@@ -49,7 +66,7 @@ const CreateStudent = () => {
             <div className="p-3 md:p-5">
               <div className="p-8 bg-sky-100 rounded-md">
                 <h3 className="text-2xl merge-icon">
-                  <a href='' className="mr-2"><ArrowLeftCircle/></a> Tambah Siswa Baru
+                  <Link to={"/student"} className="mr-2"><ArrowLeftCircle/></Link> Tambah Siswa Baru
                 </h3>
               </div>
               

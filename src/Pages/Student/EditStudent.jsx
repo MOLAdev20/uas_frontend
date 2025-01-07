@@ -84,15 +84,12 @@ const EditStudent = () => {
         {/* End Navbar */}
 
         {/* Content */}
-        <div className="my-3 grid grid-cols-5 gap-4">
-          <div className="md:col-span-1 col-span-12">
-            
-          </div>
-          <div className="md:col-span-4 col-span-12">
+        <div className="my-3">
+          <div className="md:px-20">
             <div className="p-3 md:p-5">
               <div className="p-8 bg-sky-100 rounded-md">
                 <h3 className="text-2xl merge-icon">
-                  <Link to={"/student"} className="mr-2"><ArrowLeftCircle/></Link> Edit Siswa
+                  <Link to={`/student/detail/${studentId}`} className="mr-2"><ArrowLeftCircle/></Link> Edit Informasi Siswa
                 </h3>
               </div>
               

@@ -1,4 +1,4 @@
-import { ArrowLeftCircle, Pencil, Upload } from "react-bootstrap-icons";
+import { ArrowLeftCircle, Ban, Pencil, Upload } from "react-bootstrap-icons";
 import { Link } from "react-router-dom";
 import Navbar from "../../Components/Navbar";
 import changeFormatDate from "../../helper/DateFormat";
@@ -20,6 +20,7 @@ const StudentDetail = () => {
 
             if(resJSON.status == "success"){
                 setData([resJSON.data])
+                document.title = `${resJSON.data.name} | SIAKAD7`;
             }
         })
         .finally(() => setLoading(false))
@@ -46,7 +47,40 @@ const StudentDetail = () => {
 
             fetchData()
         })
+        .catch(err => console.log(err))
         .finally(() => setLoading(false))
+    }
+
+    const handleDelete = (id) => {
+
+        Swal.fire({
+            title: 'Yakin ingin menghapus?',
+            text: "Data akan dihapus secara permanen!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, Hapus!',
+            cancelButtonText: 'Batal'
+          }).then((result) => {
+            if (result.isConfirmed) {
+
+                fetch(`${import.meta.env.VITE_API}/student/delete/${id}`, {
+                    method: "DELETE"
+                }).then(res => res.json())
+                .then(({status}) => {
+                    if(status == "success"){
+                        Swal.fire('Berhasil', "Data berhasil dihapus", 'success');
+                    }
+                    setTimeout(() => {
+                        location.replace("/student");
+                    }, 1000);
+                })
+
+            }
+          })
+
+        
     }
 
     
@@ -59,13 +93,9 @@ const StudentDetail = () => {
                     <Navbar/>
                 {/* End Navbar */}
 
-                <div className="my-3 grid grid-cols-5 gap-4">
-
-                    <div className="md:col-span-1 col-span-12">
-                
-                    </div>
-                    <div className="md:col-span-4 col-span-12">
-                        <div className="p-3 md:p-5">
+                <div className="my-3">
+                    <div className="md:px-20">
+                        <div className="p-2 md:p-5">
                             <div className="p-8 bg-sky-100 rounded-md">
                                 <h3 className="text-2xl merge-icon">
                                 <Link to={"/student"} className="mr-2"><ArrowLeftCircle/></Link> Detail Informasi Siswa
@@ -106,7 +136,7 @@ const StudentDetail = () => {
                                                 </div>
                                                 <div>
                                                     <Link to={`/student/edit/${item.id}`} >
-                                                        <Pencil/>
+                                                        <div className="bg-blue-600 hover:bg-blue-800 text-white font-bold p-4 rounded-full"><Pencil/></div>
                                                     </Link>
                                                 </div>
                                             </div>
@@ -179,6 +209,7 @@ const StudentDetail = () => {
                                                 </dl>
                                             </div>
                                         </div>
+                                        <button onClick={() => handleDelete(item.id)} className="flex items-center gap-2 text-red-600 mt-3 justify-end"><Ban/>Hapus Siswa</button>
                                     </div>
                                 </div>)
                             ) : 
@@ -189,7 +220,6 @@ const StudentDetail = () => {
                         </div>
 
                     </div>
-
                 </div>
             </div>
         </>

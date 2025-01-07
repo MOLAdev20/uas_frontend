@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import { Link } from 'react-router-dom'
-import { ArrowLeftCircle, PlusCircle, Search } from "react-bootstrap-icons"
+import { ArrowLeftCircle, ArrowRightCircle, PlusCircle, Search } from "react-bootstrap-icons"
 import Navbar from "../../Components/Navbar"
 import Loading from "../../Components/Loading"
 import changeFormatDate from "../../helper/DateFormat"
@@ -12,6 +12,8 @@ const ShowStudent = () => {
   const [loading, setLoading] = useState(true)
 
 	useEffect(() => {
+
+    document.title = "Data Seluruh Siswa | SIAKAD7";
 
 		fetch(`${import.meta.env.VITE_API}/student/`)
 		.then(res => res.json())
@@ -44,11 +46,8 @@ const ShowStudent = () => {
         {/* End Navbar */}
 
         {/* Content */}
-        <div className="my-3 grid grid-cols-5 gap-4">
-          <div className="md:col-span-1 col-span-12">
-            
-          </div>
-          <div className="md:col-span-4 col-span-12">
+        <div className="my-3">
+          <div className="md:px-20">
             <div className="p-3 md:p-5">
               <div className="p-8 bg-sky-100 rounded-md">
                 <h3 className="text-2xl merge-icon">
@@ -100,9 +99,9 @@ const ShowStudent = () => {
                           <tbody>
                             {data.length > 0 ? data.map((m) => (
                               <tr key={m.id} className="bg-white border-b">
-                                <td className="px-6 py-4">
-                                  {m.avatar == "none" ? <img src={`${import.meta.env.VITE_API}/assets/defaultUser.jpg`} alt="avatar" className="rounded-full" width={"50px"}/> :
-                                  <img src={`${import.meta.env.VITE_API}/upload/${m.avatar}`} alt="avatar" className="rounded-full" width={"50px"}/>}
+                                <td className="ps-2 md:px-4 md:py-2">
+                                  {m.avatar == "none" ? <img src={`${import.meta.env.VITE_API}/assets/defaultUser.jpg`} alt="avatar" className="rounded-full border" width={"50px"}/> :
+                                  <img src={`${import.meta.env.VITE_API}/upload/${m.avatar}`} alt="avatar" className="rounded-full border" width={"50px"}/>}
                                 </td>
                                 <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                                   {m.nisn}
@@ -117,7 +116,7 @@ const ShowStudent = () => {
                                   {m.birth_place}, {changeFormatDate(m.birth_date)}
                                 </td>
                                 <td className="px-6 py-4">
-                                  <Link to={`/student/detail/${m.id}`} className="font-medium text-blue-600 hover:underline">Detail</Link>
+                                  <Link to={`/student/detail/${m.id}`} className="font-medium flex items-center text-blue-600 hover:underline">Detail <ArrowRightCircle className="ms-1"/></Link>
                                 </td>
                               </tr>
                             )) : <tr><td colSpan={5} className="text-center py-3 text-md">Data tidak ditemukan</td></tr>}
